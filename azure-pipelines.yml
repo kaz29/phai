@@ -27,3 +27,18 @@ steps:
 
 - script: composer install --no-interaction --prefer-dist
   displayName: 'composer install'
+
+- script: ./vendor/bin/phpunit --configuration phpunit-ci.xml
+  displayName: 'UniTest'
+
+- task: PublishTestResults@2 # see) https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
+  inputs:
+    testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit, cTest
+    testResultsFiles: 'logs/phpunit-*.xml'
+    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+    #mergeTestResults: false # Optional
+    failTaskOnFailedTests: true # Optional
+    #testRunTitle: # Optional
+    #buildPlatform: # Optional
+    #buildConfiguration: # Optional
+    #publishRunAttachments: true # Optional

@@ -2,6 +2,8 @@
 
 Phai is PSR-15 compliant middleware for [Application Insights](https://docs.microsoft.com/ja-jp/azure/azure-monitor/app/app-insights-overview).
 
+[![Build Status](https://dev.azure.com/kaz29/phai/_apis/build/status/kaz29.phai?branchName=master)](https://dev.azure.com/kaz29/phai/_build/latest?definitionId=2&branchName=master)
+
 ## Installation
 
 Install the latest version with
