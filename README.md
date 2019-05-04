@@ -37,7 +37,7 @@ $ env APPLICATION_INSIGHTS_KEY='Your application insights "Instrumentation Key"'
 ```
 $ cd examples/cakephp
 $ composer install
-$ env APPLICATION_INSIGHTS_KEY=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX ./bin/cake server 
+$ env APPLICATION_INSIGHTS_KEY='Your application insights "Instrumentation Key"' ./bin/cake server 
 ```
 
 ### Laravel
