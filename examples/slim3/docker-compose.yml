@@ -11,6 +11,7 @@ services:
         command: php -S 0.0.0.0:8080 -t public
         environment:
             docker: "true"
+            # Set your own application insights "Instrumentation Key".
             APPLICATION_INSIGHTS_KEY: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
         ports:
             - 8080:8080

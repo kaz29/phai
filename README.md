@@ -20,9 +20,29 @@ Frameworks or libraries using PSR-15 can be used very easily with this middlewar
 
 - [Slim3 example](https://github.com/kaz29/phai/tree/master/examples/slim3)
 
+#### How to setup
+
+```
+$ cd examples/slim3
+$ composer install
+$ env APPLICATION_INSIGHTS_KEY='Your application insights "Instrumentation Key"' php -S localhost:8080 -t public public/index.php
+```
+
 ### CakePHP
 
+- [CakePHP example](https://github.com/kaz29/phai/tree/master/examples/cakephp)
+
+#### Hot to setup
+
+```
+$ cd examples/cakephp
+$ composer install
+$ env APPLICATION_INSIGHTS_KEY=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX ./bin/cake server 
+```
+
 ### Laravel
+
+TBD
 
 ## Author
 

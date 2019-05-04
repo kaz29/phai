@@ -18,7 +18,7 @@ return [
 
         // phai settings
         'phai' => [
-            'key' => $_ENV['APPLICATION_INSIGHTS_KEY'],
+            'key' => getenv('APPLICATION_INSIGHTS_KEY'),
         ],
     ],
 ];
