@@ -18,7 +18,7 @@ Frameworks or libraries using PSR-15 can be used very easily with this middlewar
 
 ### Slim3
 
-- https://github.com/bnf/slim3-psr15
+- [Slim3 example](https://github.com/kaz29/phai/tree/master/examples/slim3)
 
 ### CakePHP
 
