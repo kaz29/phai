@@ -7,7 +7,7 @@ Phai is PSR-15 compliant middleware for [Application Insights](https://docs.micr
 Install the latest version with
 
 ```
-$ composer install kaz29/phai
+$ composer install kaz29/phai:dev-master
 ```
 
 ## Basic Usage
