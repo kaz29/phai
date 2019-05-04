@@ -1,0 +1,30 @@
+{
+    "name": "kaz29/phai",
+    "description": "Phai is PSR-15 compliant middleware for Application Insights.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kazuhiro Watanabe",
+            "email": "cyo@mac.com"
+        }
+    ],
+    "require": {
+        "microsoft/application-insights": "^0.4.4",
+        "psr/http-message": "^1.0",
+        "psr/log": "^1.1",
+        "psr/http-server-middleware": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "kaz29\\Phai\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "kaz29\\Phai\\Tests\\": "tests/"
+        }
+    }
+}
