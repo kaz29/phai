@@ -11,7 +11,7 @@ class Phai
     /**
      * @var Telemetry_Client
      */
-    static private $_telemetryClienInstance = null;
+    static private $_telemetryClientInstance = null;
 
     public static function createClient() : Telemetry_Client
     {
@@ -28,7 +28,7 @@ class Phai
      */
     public static function initialize(Telemetry_Client $client, string $instrumentationKey = null, Application $app = null, User $user = null )
     {
-        if (is_null(self::$_telemetryClienInstance)) {
+        if (is_null(self::$_telemetryClientInstance)) {
             $context = $client->getContext();
             $context->setInstrumentationKey($instrumentationKey);
 
@@ -40,30 +40,30 @@ class Phai
                 $context->setUserContext($user);
             }
 
-            self::$_telemetryClienInstance = $client;
-            self::$_telemetryClienInstance->trackMessage('initialized', Message_Severity_Level::VERBOSE);
+            self::$_telemetryClientInstance = $client;
+            self::$_telemetryClientInstance->trackMessage('initialized', Message_Severity_Level::VERBOSE);
 
             register_shutdown_function(function () {
                 self::shutdown();
             });
         }
 
-        return self::$_telemetryClienInstance;
+        return self::$_telemetryClientInstance;
     }
 
     public static function shutdown()
     {
-        if (is_null(self::$_telemetryClienInstance)) {
+        if (is_null(self::$_telemetryClientInstance)) {
             return;
         }
 
-        self::$_telemetryClienInstance->trackMessage('register_shutdown_function', Message_Severity_Level::VERBOSE);
-        self::$_telemetryClienInstance->flush();
-        self::$_telemetryClienInstance = null;
+        self::$_telemetryClientInstance->trackMessage('register_shutdown_function', Message_Severity_Level::VERBOSE);
+        self::$_telemetryClientInstance->flush();
+        self::$_telemetryClientInstance = null;
     }
 
     public static function getClient()
     {
-        return self::$_telemetryClienInstance;
+        return self::$_telemetryClientInstance;
     }
 }
