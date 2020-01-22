@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  phai-cakephp:
+    container_name: phai-cakephp
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+    environment:
+      APP_ENV: development
+      APPLICATION_INSIGHTS_KEY: 'SET YOUR INSTRUMENTION KEY'
+
+    volumes:
+      - ./:/srv:cached
