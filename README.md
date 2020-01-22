@@ -30,7 +30,7 @@ $ composer install
 $ env APPLICATION_INSIGHTS_KEY='Your application insights "Instrumentation Key"' php -S localhost:8080 -t public public/index.php
 ```
 
-### CakePHP
+### CakePHP-3.x
 
 - [CakePHP example](https://github.com/kaz29/phai/tree/master/examples/cakephp)
 
