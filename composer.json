@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "microsoft/application-insights": "dev-dev",
+        "microsoft/application-insights": "dev-master",
         "psr/http-message": "^1.0",
         "psr/log": "^1.1",
         "psr/http-server-middleware": "^1.0"
