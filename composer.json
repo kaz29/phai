@@ -9,13 +9,13 @@
         }
     ],
     "require": {
-        "microsoft/application-insights": "^0.4.4",
+        "microsoft/application-insights": "dev-dev",
         "psr/http-message": "^1.0",
         "psr/log": "^1.1",
         "psr/http-server-middleware": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.5"
+        "phpunit/phpunit": "~7|~8|~9"
     },
     "autoload": {
         "psr-4": {
@@ -25,6 +25,12 @@
     "autoload-dev": {
         "psr-4": {
             "kaz29\\Phai\\Tests\\": "tests/"
+        }
+    },
+    "repositories": {
+        "microsoft/application-insights": {
+            "type": "vcs",
+            "url": "https://github.com/kaz29/ApplicationInsights-PHP.git"
         }
     }
 }
