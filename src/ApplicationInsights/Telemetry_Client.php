@@ -15,7 +15,7 @@ class Telemetry_Client extends \ApplicationInsights\Telemetry_Client
      * @param \ApplicationInsights\Telemetry_Context $context
      * @param \ApplicationInsights\Channel\Telemetry_Channel $channel
      */
-    public function __construct(Telemetry_Context $context = NULL, Channel\Telemetry_Channel $channel = NULL, $logLevel = Severity_Level::Verbose)
+    public function __construct(Telemetry_Context $context = NULL, Telemetry_Channel $channel = NULL, $logLevel = Severity_Level::Verbose)
     {
         parent::__construct($context, $channel);
 
