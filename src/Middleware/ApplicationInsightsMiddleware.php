@@ -44,6 +44,17 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {
+            $context = $this->client->getContext();
+            $serverParams = $request->getServerParams();
+            $context->getLocationContext()->setIp($this->getRemoteIP($request));
+            $context->setProperties([
+                'REMOTE_IP' => $this->getRemoteIP($request),
+                'REMOTE_PORT' => $serverParams['REMOTE_PORT'],
+                'HTTP_USER_AGENT' => $serverParams['HTTP_USER_AGENT'],
+            ]);
+            $context->getDeviceContext()->setOsVersion(array_key_exists('HTTP_SEC_CH_UA_PLATFORM', $serverParams) ? $serverParams['HTTP_SEC_CH_UA_PLATFORM'] : 'unknown');
+            $context->getDeviceContext()->setModel(array_key_exists('HTTP_SEC_CH_UA', $serverParams) ? $serverParams['HTTP_SEC_CH_UA'] : 'unknown');
+
             /**
              * @var ResponseInterface $response
              */
@@ -67,6 +78,19 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
             $this->client->trackException($exception);
             throw $exception;
         }
+    }
+
+    /**
+     * Get remote client ip address from request
+     * 
+     * @param ServerRequestInterface $request
+     * @return string
+     */
+    protected function getRemoteIP(ServerRequestInterface $request): string
+    {
+        $serverParams = $request->getServerParams();
+
+        return array_key_exists('HTTP_X_FORWARDED_FOR', $serverParams) ? $serverParams['HTTP_X_FORWARDED_FOR'] : $serverParams['REMOTE_ADDR'];
     }
 
     /**
