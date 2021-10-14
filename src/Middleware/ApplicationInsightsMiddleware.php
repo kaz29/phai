@@ -26,11 +26,19 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
      */
     private $startTime;
 
-    public function __construct(Telemetry_Client $client, string $name = 'request')
+    /**
+     * Option parameters
+     *
+     * @var array options
+     */
+    private $options = [];
+
+    public function __construct(Telemetry_Client $client, string $name = 'request', array $options = [])
     {
         $this->startTime = microtime(true);
         $this->name = $name;
         $this->client = $client;
+        $this->options = $options;
     }
 
     /**
@@ -60,15 +68,17 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
              */
             $response = $handler->handle($request);
 
-            $statusMode = (int)($response->getStatusCode()/100);
-            $this->client->trackRequest(
-                $this->name,
-                (string)$request->getUri(),
-                $this->startTime,
-                $this->getDuration(),
-                $response->getStatusCode(),
-                ($statusMode === 2 || $statusMode === 3)
-            );
+            if ($this->isExcludePath($request) !== true) {
+                $statusMode = (int)($response->getStatusCode()/100);
+                $this->client->trackRequest(
+                    $this->name,
+                    (string)$request->getUri(),
+                    $this->startTime,
+                    $this->getDuration(),
+                    $response->getStatusCode(),
+                    ($statusMode === 2 || $statusMode === 3)
+                );
+            }
 
             return $response;
         } catch (\Throwable $exception) {
@@ -91,6 +101,23 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
         $serverParams = $request->getServerParams();
 
         return array_key_exists('HTTP_X_FORWARDED_FOR', $serverParams) ? $serverParams['HTTP_X_FORWARDED_FOR'] : $serverParams['REMOTE_ADDR'];
+    }
+
+    /**
+     * Check if the accessed URI is outside the scope of logging.
+     * 
+     * @param ServerRequestInterface $request
+     * @return bool
+     */
+    protected function isExcludePath(ServerRequestInterface $request): bool
+    {
+        if (array_key_exists('exclude_paths', $this->options) !== true) {
+            return false;
+        }
+
+        $uri = parse_url($request->getUri(), PHP_URL_PATH);
+
+        return in_array($uri, $this->options['exclude_paths']);
     }
 
     /**
