@@ -59,6 +59,8 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
                 'REMOTE_IP' => $this->getRemoteIP($request),
                 'REMOTE_PORT' => $serverParams['REMOTE_PORT'],
                 'HTTP_USER_AGENT' => $serverParams['HTTP_USER_AGENT'],
+                'METHOD' => $request->getMethod(),
+                'PATH' => $request->getUri()->getPath(),
             ]);
             $context->getDeviceContext()->setOsVersion(array_key_exists('HTTP_SEC_CH_UA_PLATFORM', $serverParams) ? $serverParams['HTTP_SEC_CH_UA_PLATFORM'] : 'unknown');
             $context->getDeviceContext()->setModel(array_key_exists('HTTP_SEC_CH_UA', $serverParams) ? $serverParams['HTTP_SEC_CH_UA'] : 'unknown');
