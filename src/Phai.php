@@ -58,7 +58,7 @@ class Phai
         }
 
         self::$_telemetryClientInstance->trackMessage('register_shutdown_function', Message_Severity_Level::VERBOSE);
-        self::$_telemetryClientInstance->flush();
+        self::$_telemetryClientInstance->flush([], true);
         self::$_telemetryClientInstance = null;
     }
 
