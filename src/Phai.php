@@ -26,7 +26,7 @@ class Phai
      * @param User|null $user
      * @return null|Phai
      */
-    public static function initialize(Telemetry_Client $client, string $instrumentationKey = null, Application $app = null, User $user = null )
+    public static function initialize(Telemetry_Client $client, string $instrumentationKey = null, Application $app = null, User $user = null, Callable $customShutdownFunc = null)
     {
         if (is_null(self::$_telemetryClientInstance)) {
             $context = $client->getContext();
@@ -43,9 +43,15 @@ class Phai
             self::$_telemetryClientInstance = $client;
             self::$_telemetryClientInstance->trackMessage('initialized', Message_Severity_Level::VERBOSE);
 
-            register_shutdown_function(function () {
-                self::shutdown();
-            });
+            if ($customShutdownFunc === null) {
+                register_shutdown_function(function () {
+                    self::shutdown();
+                });
+            } else {
+                register_shutdown_function(function () use($customShutdownFunc, $client) {
+                    call_user_func($customShutdownFunc, $client);                   
+                });
+            }
         }
 
         return self::$_telemetryClientInstance;
