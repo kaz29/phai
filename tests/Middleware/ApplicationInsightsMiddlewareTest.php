@@ -86,7 +86,11 @@ class ApplicationInsightsMiddlewareTest extends TestCase
             return new Response($responseCode);
         });
 
-        $request = new ServerRequest('GET', new Uri($uri));
+        $request = new ServerRequest('GET', new Uri($uri), [], null, '1.1', [
+            'REMOTE_ADDR' => '127.0.0.1',
+            'REMOTE_PORT' => '30000',
+            'HTTP_USER_AGENT' => 'curl',
+        ]);
 
         $response = $middleware->process($request, $handler);
         $this->assertInstanceOf('\GuzzleHttp\Psr7\Response', $response);
@@ -105,5 +109,95 @@ class ApplicationInsightsMiddlewareTest extends TestCase
         $this->assertEquals($success, $result->getSuccess());
         $this->assertEquals($uri, $result->getUrl());
         $this->assertTrue($this->convertTimeSpanToMilliseconds($result->getDuration())>=$sleep);
+    }
+
+    function testExcludeSimple()
+    {
+        $client = new Telemetry_Client();
+        $middleware = new ApplicationInsightsMiddleware(
+            $client,
+            'request',
+            [
+                'exclude_paths' => ['/test'],
+            ]
+        );
+
+        $handler = new RequestHandlerForTest(function (ServerRequestInterface $request) {
+            return new Response(200);
+        });
+
+        $request = new ServerRequest('GET', new Uri('/test'), [], null, '1.1', [
+            'REMOTE_ADDR' => '127.0.0.1',
+            'REMOTE_PORT' => '30000',
+            'HTTP_USER_AGENT' => 'curl',
+        ]);
+
+        $response = $middleware->process($request, $handler);
+        $this->assertInstanceOf('\GuzzleHttp\Psr7\Response', $response);
+
+        $result = $client->getChannel()->getQueue();
+        $this->assertCount(0, $result);
+    }
+
+    function testExcludeWithAgent()
+    {
+        $client = new Telemetry_Client();
+        $middleware = new ApplicationInsightsMiddleware(
+            $client,
+            'request',
+            [
+                'exclude_paths' => [
+                    '/test' => [
+                        'agents' => ['curl']
+                    ]],
+            ]
+        );
+
+        $handler = new RequestHandlerForTest(function (ServerRequestInterface $request) {
+            return new Response(200);
+        });
+
+        $request = new ServerRequest('GET', new Uri('/test'), [], null, '1.1', [
+            'REMOTE_ADDR' => '127.0.0.1',
+            'REMOTE_PORT' => '30000',
+            'HTTP_USER_AGENT' => 'curl',
+        ]);
+
+        $response = $middleware->process($request, $handler);
+        $this->assertInstanceOf('\GuzzleHttp\Psr7\Response', $response);
+
+        $result = $client->getChannel()->getQueue();
+        $this->assertCount(0, $result);
+    }
+
+    function testExcludeWithAgentUnMatch()
+    {
+        $client = new Telemetry_Client();
+        $middleware = new ApplicationInsightsMiddleware(
+            $client,
+            'request',
+            [
+                'exclude_paths' => [
+                    '/test' => [
+                        'agents' => ['curl']
+                    ]],
+            ]
+        );
+
+        $handler = new RequestHandlerForTest(function (ServerRequestInterface $request) {
+            return new Response(200);
+        });
+
+        $request = new ServerRequest('GET', new Uri('/test'), [], null, '1.1', [
+            'REMOTE_ADDR' => '127.0.0.1',
+            'REMOTE_PORT' => '30000',
+            'HTTP_USER_AGENT' => 'hoge',
+        ]);
+
+        $response = $middleware->process($request, $handler);
+        $this->assertInstanceOf('\GuzzleHttp\Psr7\Response', $response);
+
+        $result = $client->getChannel()->getQueue();
+        $this->assertCount(1, $result);
     }
 }
