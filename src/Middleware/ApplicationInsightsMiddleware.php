@@ -119,7 +119,20 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
 
         $uri = parse_url($request->getUri(), PHP_URL_PATH);
 
-        return in_array($uri, $this->options['exclude_paths']);
+        $result = in_array($uri, $this->options['exclude_paths']) || in_array($uri, array_keys($this->options['exclude_paths']));
+        if ($result === false) {
+            return false;
+        }
+
+        if (!array_key_exists($uri, $this->options['exclude_paths']) ||
+            !is_array($this->options['exclude_paths'][$uri]) ||
+            !array_key_exists('agents', $this->options['exclude_paths'][$uri])) {
+            return $result;
+        }
+
+        $serverParams = $request->getServerParams();
+
+        return in_array($serverParams['HTTP_USER_AGENT'], $this->options['exclude_paths'][$uri]['agents']);
     }
 
     /**
