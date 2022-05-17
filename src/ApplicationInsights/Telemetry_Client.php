@@ -25,7 +25,7 @@ class Telemetry_Client extends \ApplicationInsights\Telemetry_Client
     /**
      * Sends an Message_Data to the Application Insights service.
      * @param string $message The trace message.
-     * @param string $severityLevel The severity level of the message. Found: \ApplicationInsights\Channel\Contracts\Message_Severity_Level::Value
+     * @param int $severityLevel The severity level of the message. Found: \ApplicationInsights\Channel\Contracts\Message_Severity_Level::Value
      * @param array $properties An array of name to value pairs. Use the name as the index and any string as the value.
      */
     public function trackMessage($message, $severityLevel = NULL, $properties = NULL)
