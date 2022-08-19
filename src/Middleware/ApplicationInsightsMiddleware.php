@@ -7,6 +7,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+const MAX_IP_LENGTH=46; // IPアドレスの最大長
+
 class ApplicationInsightsMiddleware implements MiddlewareInterface
 {
     /**
@@ -54,7 +56,7 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
         try {
             $context = $this->client->getContext();
             $serverParams = $request->getServerParams();
-            $context->getLocationContext()->setIp($this->getRemoteIP($request));
+            $context->getLocationContext()->setIp($this->truncateIP($this->getRemoteIP($request)));
             $context->setProperties([
                 'REMOTE_IP' => $this->getRemoteIP($request),
                 'REMOTE_PORT' => $serverParams['REMOTE_PORT'],
@@ -102,7 +104,24 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
     {
         $serverParams = $request->getServerParams();
 
-        return array_key_exists('HTTP_X_FORWARDED_FOR', $serverParams) ? $serverParams['HTTP_X_FORWARDED_FOR'] : $serverParams['REMOTE_ADDR'];
+        if (array_key_exists('HTTP_X_AZURE_CLIENTIP', $serverParams)) {
+            return $serverParams['HTTP_X_AZURE_CLIENTIP'];
+        }
+
+        if (array_key_exists('HTTP_X_FORWARDED_FOR', $serverParams)) {
+            return $serverParams['HTTP_X_FORWARDED_FOR'];
+        }
+
+        return $serverParams['REMOTE_ADDR'];
+    }
+
+    protected function truncateIP(string $ip): string
+    {
+        if (strlen($ip) <= MAX_IP_LENGTH) {
+            return $ip;
+        }
+
+        return substr($ip, 0, MAX_IP_LENGTH-3).'...';
     }
 
     /**
