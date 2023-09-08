@@ -60,7 +60,10 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
             $context->setProperties([
                 'REMOTE_IP' => $this->getRemoteIP($request),
                 'REMOTE_PORT' => $serverParams['REMOTE_PORT'],
-                'HTTP_USER_AGENT' => $serverParams['HTTP_USER_AGENT'],
+                'HTTP_USER_AGENT' => 
+                    array_key_exists('HTTP_USER_AGENT', $serverParams)
+                        ? $serverParams['HTTP_USER_AGENT']
+                        : 'unknown',
                 'METHOD' => $request->getMethod(),
                 'PATH' => $request->getUri()->getPath(),
             ]);
@@ -150,6 +153,9 @@ class ApplicationInsightsMiddleware implements MiddlewareInterface
         }
 
         $serverParams = $request->getServerParams();
+        if (array_key_exists('HTTP_USER_AGENT', $serverParams) !== true) {
+            return $result;
+        }
 
         return in_array($serverParams['HTTP_USER_AGENT'], $this->options['exclude_paths'][$uri]['agents']);
     }
